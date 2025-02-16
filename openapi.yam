@@ -1,0 +1,272 @@
+openapi: 3.0.3
+info:
+  title: Previred API
+  description: API for Previred
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Generated server URL
+tags:
+  - name: Users
+    description: Users CRUD
+paths:
+  /api/v1/user/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get User by ID
+      description: Get User by unique ID
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+    put:
+      tags:
+        - Users
+      summary: Update User
+      description: Update user by ID, only Name, Last Name, Email and birthDate
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateRequest"
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - Users
+      summary: Delete User
+      description: Delete User by ID
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+
+  /api/v1/user:
+    post:
+      tags:
+        - Users
+      summary: Create User
+      description: New user save in the database.
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreateRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  /api/v1/users:
+    get:
+      tags:
+        - Users
+      summary: Get all Users
+      description: List all users in the database
+      operationId: getAllUsers
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponse"
+
+  /api/v1/users/search:
+    get:
+      tags:
+        - Users
+      operationId: searchUsers
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: lastName
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/PageUserResponse"
+
+components:
+  schemas:
+    UserUpdateRequest:
+      type: object
+      properties:
+        rut:
+          type: integer
+          format: int64
+        dv:
+          type: string
+        name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        birth_date:
+          type: string
+          format: date
+        password:
+          type: string
+
+    UserCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        rut:
+          type: integer
+          format: int64
+        dv:
+          type: string
+        birthDate:
+          type: string
+          format: date
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        last_name:
+          type: string
+        rut:
+          type: integer
+          format: int64
+        dv:
+          type: string
+        birth_date:
+          type: string
+          format: date
+        email:
+          type: string
+
+    PageUserResponse:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        first:
+          type: boolean
+        last:
+          type: boolean
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserResponse"
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: boolean
+
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        unpaged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        unsorted:
+          type: boolean
+        sorted:
+          type: boolean
